@@ -31,15 +31,33 @@ def turtleToFunction(commands: str, functionName: str) -> str:
                 # forward gets scaled
                 newCommands[i] = f"{indentation}{command}(scale * ({value}))"
             elif "goto" in command:
-                # goto gets transformed and shifted
+                # goto gets scaled and shifted
                 x, y = value.split(",") 
                 newCommands[i] = f"{indentation}{command}(scale * ({x}) + xShift, scale * ({y}) + yShift)"
             elif "setposition" in command or "setpos" in command:
-                # setposition gets transformed and shifted
+                # setposition gets scaled and shifted
                 x, y = value.split(",")
                 # remove whitespace
                 y = y.strip() 
                 newCommands[i] = f"{indentation}{command}(scale * ({x}) + xShift, scale * ({y}) + yShift)"
+            elif "circle" in command:
+                # circle gets scaled 
+                args = value.split(",")
+
+                if len(args) == 1:
+                    # only radius was provided
+                    newCommands[i] = f"{indentation}{command}(scale * ({args[0]}))"
+                elif len(args) == 2:
+                    # radius and extent were provided
+                    # remove whitespace
+                    args[1] = args[1].strip()
+                    newCommands[i] = f"{indentation}{command}(scale * ({args[0]}), {args[1]})"
+                elif len(args) == 3:
+                    # radius, extent and steps were provided
+                    # remove whitespace
+                    args[1] = args[1].strip()
+                    args[2] = args[2].strip()
+                    newCommands[i] = f"{indentation}{command}(scale * ({args[0]}), {args[1]}, {args[2]})"
             else:
                 # Any other rotation
                 newCommands[i] = f"{indentation}{command}({value})"
@@ -60,19 +78,19 @@ def turtleToFunction(commands: str, functionName: str) -> str:
 if __name__ == "__main__":
     # test commands
     listOfCommands = '''
-for i in range(180):
-    forward(100)
-    right(30)
-    forward(20)
-    left(60)
-    forward(50)
-    right(30)
-    
-    penup()
-    setposition(0, 0)
-    pendown()
-    
-    right(2)
+circle(40)
+forward(100)
+right(30)
+forward(20)
+left(60)
+forward(50)
+right(30)
+
+penup()
+setposition(0, 0)
+pendown()
+
+right(2)
 '''
 
     print(turtleToFunction(listOfCommands, "transformedTurtle"))
