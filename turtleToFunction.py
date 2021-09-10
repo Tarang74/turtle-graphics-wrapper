@@ -27,7 +27,10 @@ def turtleToFunction(commands: str, functionName: str) -> str:
             # everything else
             indentation, command, value = findall("([\s]*)([A-Za-z\.]+)(?:\()([-\d\w,\s()\[\]]*)(?:\))", commands[i])[0]
 
-            if "forward" in command:
+            if "forward" in command or "fd" in command:
+                # forward gets scaled
+                newCommands[i] = f"{indentation}{command}(scale * ({value}))"
+            if "backward" in command or "bk" in command or "back" in command:
                 # forward gets scaled
                 newCommands[i] = f"{indentation}{command}(scale * ({value}))"
             elif "goto" in command:
